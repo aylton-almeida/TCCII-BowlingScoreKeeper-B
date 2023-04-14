@@ -102,6 +102,44 @@ class TestGames(unittest.TestCase):
 
         self.assertEqual(self.game.frames[-1].bonus_throw, 4)
 
+    def test_Score_when_NoSparesOrStrikes(self):
+        for i in range(10):
+            self.game.add_frame(Frame(i, 0))
+
+        self.assertEqual(self.game.score(), 45)
+
+    def test_Score_when_HasSpares(self):
+        self.game.add_frame(Frame(3, 0))
+        self.game.add_frame(Frame(4, 6))
+        self.game.add_frame(Frame(4, 2))
+
+        self.assertEqual(self.game.score(), 3 + 10 + 6 + 6)
+
+    def test_Score_when_HasSequentialSpares(self):
+        self.game.add_frame(Frame(3, 0))
+        self.game.add_frame(Frame(4, 6))
+        self.game.add_frame(Frame(0, 10))
+        self.game.add_frame(Frame(4, 2))
+
+        self.assertEqual(self.game.score(), 3 + 10 + 10 + 10 + 6 + 6)
+
+    def test_Score_when_HasStrike(self):
+        self.game.add_frame(Frame(3, 0))
+        self.game.add_frame(Frame(10, 0))
+        self.game.add_frame(Frame(4, 2))
+        self.game.add_frame(Frame(7, 0))
+
+        self.assertEqual(self.game.score(), 3 + 10 + 6 + 6 + 7 + 7)
+
+    def test_Score_when_HasSequentialStrikes(self):
+        self.game.add_frame(Frame(3, 0))  # 3
+        self.game.add_frame(Frame(10, 0))  # 10 10 6
+        self.game.add_frame(Frame(10, 0))  # 10 6 7
+        self.game.add_frame(Frame(4, 2))  # 6
+        self.game.add_frame(Frame(7, 0))  # 7
+
+        self.assertEqual(self.game.score(), 3 + 10 + 10 + 6 + 10 + 6 + 7 + 6 + 7)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -39,10 +39,21 @@ class BowlingGame:
 
     def score(self) -> int:
         """Get the score from the game"""
-        # To be implemented
-        pass
 
-    def is_next_frame_bonus(self) -> bool:
-        """Get if the next frame is bonus"""
-        # To be implemented
-        pass
+        total = 0
+        spare_or_strike_bonus_left = 0
+
+        for frame in self.frames:
+            if spare_or_strike_bonus_left > 0:
+                spare_or_strike_bonus_left -= 1
+                total += frame.score() * 2
+            else:
+                total += frame.score()
+
+            if frame.is_spare():
+                spare_or_strike_bonus_left += 1
+
+            if frame.is_strike():
+                spare_or_strike_bonus_left += 2
+
+        return total
